@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{% block title %}관리자 대시보드{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-100 text-gray-800">
+
+  <!-- 상단 헤더 -->
+  <header class="h-14 bg-white shadow flex items-center justify-between px-6">
+    <div class="font-bold text-indigo-600">AI 관리자 대시보드</div>
+    <div class="flex items-center gap-4 text-sm">
+      <!-- ❗ 'home' 역참조 오류 방지: 루트로 보냄 -->
+      <a href="/" class="hover:text-indigo-600">사용자 화면</a>
+      <a href="{% url 'accounts:logout' %}" class="text-red-500 hover:text-red-600">로그아웃</a>
+    </div>
+  </header>
+
+  <div class="flex">
+
+    <!-- 좌측 사이드바 -->
+    <aside class="w-64 bg-white border-r min-h-[calc(100vh-3.5rem)]">
+      <nav class="p-4 space-y-1">
+        {% with cur=request.resolver_match.url_name %}
+
+          <a href="{% url 'accounts:admin_home' %}"
+             class="block px-3 py-2 rounded-lg hover:bg-indigo-50
+                    {% if cur == 'admin_home' %}bg-indigo-50 text-indigo-700 font-semibold{% endif %}">
+            대시보드
+          </a>
+
+          <a href="{% url 'accounts:admin_users' %}"
+             class="block px-3 py-2 rounded-lg hover:bg-indigo-50
+                    {% if cur in 'admin_users admin_user_edit' %}bg-indigo-50 text-indigo-700 font-semibold{% endif %}">
+            회원정보
+          </a>
+
+          <a href="{% url 'accounts:admin_billing' %}"
+             class="block px-3 py-2 rounded-lg hover:bg-indigo-50
+                    {% if cur == 'admin_billing' %}bg-indigo-50 text-indigo-700 font-semibold{% endif %}">
+            결제관리
+          </a>
+
+          <a href="{% url 'accounts:admin_api_usage' %}"
+             class="block px-3 py-2 rounded-lg hover:bg-indigo-50
+                    {% if cur == 'admin_api_usage' %}bg-indigo-50 text-indigo-700 font-semibold{% endif %}">
+            API 사용료
+          </a>
+
+        {% endwith %}
+      </nav>
+    </aside>
+
+    <!-- 우측 본문 -->
+    <main class="flex-1 p-8">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

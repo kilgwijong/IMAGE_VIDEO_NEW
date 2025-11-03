@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{% block title %}마이페이지{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-800">
+
+  <!-- 상단 사용자 헤더 -->
+  <header class="h-14 bg-white shadow flex items-center justify-between px-6">
+    <div class="font-bold">AI 이미지 & 영상 생성</div>
+    <div class="flex items-center gap-2 text-sm">
+      <a href="/" class="px-3 py-1.5 rounded bg-gray-100 hover:bg-gray-200">메인</a>
+      <a href="{% url 'accounts:mypage' %}" class="px-3 py-1.5 rounded bg-indigo-600 text-white hover:bg-indigo-700">마이페이지</a>
+      <a href="{% url 'accounts:logout' %}" class="px-3 py-1.5 rounded bg-red-500 text-white hover:bg-red-600">로그아웃</a>
+    </div>
+  </header>
+
+  <!-- 본문 -->
+  <main class="max-w-6xl mx-auto p-6">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

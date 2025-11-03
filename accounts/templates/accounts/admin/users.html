@@ -1,0 +1,32 @@
+{% extends "accounts/admin/base.html" %}
+{% block title %}회원정보{% endblock %}
+{% block content %}
+  <h2 class="text-2xl font-bold mb-6">회원정보</h2>
+
+  <div class="bg-white rounded-xl shadow overflow-hidden">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-100 text-gray-700">
+        <tr>
+          <th class="px-4 py-3 text-left">ID</th>
+          <th class="px-4 py-3 text-left">아이디</th>
+          <th class="px-4 py-3 text-left">이메일</th>
+          <th class="px-4 py-3 text-left">가입일</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        {% for user in users %}
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-3">{{ user.id }}</td>
+          <td class="px-4 py-3">{{ user.username }}</td>
+          <td class="px-4 py-3">{{ user.email|default:"-" }}</td>
+          <td class="px-4 py-3">{{ user.date_joined|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="px-4 py-6 text-center text-gray-500">등록된 사용자가 없습니다.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

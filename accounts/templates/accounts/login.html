@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>로그인 | AI 이미지 & 영상 생성</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <!-- 전체 화면을 수직 정렬: 제목(밖) + 로그인 카드(안) -->
+  <div class="min-h-screen flex flex-col items-center justify-center px-4">
+
+    <!-- ✅ 카드 밖 상단 헤더 (검정색) -->
+    <h2 class="mb-6 text-center text-3xl md:text-4xl font-extrabold text-black">
+      AI 이미지 &amp; 영상 생성
+    </h2>
+
+    <!-- 로그인 카드 -->
+    <div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+      <h1 class="mb-6 text-center text-2xl font-bold text-gray-900">로그인</h1>
+
+      {% if form.errors %}
+      <div class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        아이디 또는 비밀번호가 올바르지 않습니다.
+      </div>
+      {% endif %}
+
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">아이디</label>
+          <input
+            type="text"
+            name="{{ form.username.name }}"
+            value="{{ form.username.value|default:'' }}"
+            class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            autocomplete="username"
+            required
+          />
+          {% if form.username.errors %}
+          <p class="mt-1 text-xs text-red-600">{{ form.username.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">비밀번호</label>
+          <input
+            type="password"
+            name="{{ form.password.name }}"
+            class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            autocomplete="current-password"
+            required
+          />
+          {% if form.password.errors %}
+          <p class="mt-1 text-xs text-red-600">{{ form.password.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <button
+          type="submit"
+          class="mt-2 w-full rounded-lg bg-indigo-600 py-2.5 font-semibold text-white hover:bg-indigo-700"
+        >
+          로그인
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-gray-600">
+        계정이 없으신가요?
+        <a href="{% url 'accounts:signup' %}" class="font-medium text-indigo-600 hover:underline">회원가입</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

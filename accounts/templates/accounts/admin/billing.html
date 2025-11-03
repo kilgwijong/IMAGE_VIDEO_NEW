@@ -1,0 +1,57 @@
+{% extends "accounts/admin/base.html" %}
+{% block title %}결제관리{% endblock %}
+{% block content %}
+  <h2 class="text-2xl font-bold mb-6">결제관리</h2>
+
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">이번 달 결제</div>
+      <div class="text-2xl font-semibold mt-1">₩ 89,000</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">미결제 금액</div>
+      <div class="text-2xl font-semibold mt-1">₩ 0</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">다음 결제일</div>
+      <div class="text-2xl font-semibold mt-1">2025-11-01</div>
+    </div>
+  </section>
+
+  <section class="mt-8 bg-white rounded-xl shadow">
+    <div class="flex items-center justify-between p-4 border-b">
+      <h3 class="font-semibold">최근 결제 내역</h3>
+      <button class="px-3 py-1.5 rounded-lg text-sm bg-indigo-600 text-white hover:bg-indigo-700">
+        영수증 내려받기
+      </button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-3">일시</th>
+            <th class="text-left px-4 py-3">항목</th>
+            <th class="text-right px-4 py-3">금액(₩)</th>
+            <th class="text-right px-4 py-3">상태</th>
+          </tr>
+        </thead>
+        <!-- mock data -->
+        <tbody class="divide-y">
+          <tr>
+            <td class="px-4 py-2">2025-10-30 12:04</td>
+            <td class="px-4 py-2">월간 요금(10월)</td>
+            <td class="px-4 py-2 text-right">89,000</td>
+            <td class="px-4 py-2 text-right">결제완료</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2">2025-10-25 10:12</td>
+            <td class="px-4 py-2">추가 토큰팩</td>
+            <td class="px-4 py-2 text-right">25,000</td>
+            <td class="px-4 py-2 text-right">결제완료</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-gray-400 p-4">※ 더미 데이터 – 실제 연동 전 UI 확인용.</p>
+  </section>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "accounts/admin/base.html" %}
+{% block title %}API 사용료{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl font-bold mb-6">API 사용료</h1>
+
+  <!-- 요약 카드 -->
+  <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">이번 달 호출수</div>
+      <div class="text-2xl font-semibold mt-1">12,480</div> <!-- mock data -->
+    </div>
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">이번 달 비용</div>
+      <div class="text-2xl font-semibold mt-1">₩ 184,300</div> <!-- mock data -->
+    </div>
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">평균 응답시간</div>
+      <div class="text-2xl font-semibold mt-1">812 ms</div> <!-- mock data -->
+    </div>
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">오류율</div>
+      <div class="text-2xl font-semibold mt-1">0.47%</div> <!-- mock data -->
+    </div>
+  </section>
+
+  <!-- 차트 자리 -->
+  <section class="mt-8">
+    <div class="bg-white rounded-xl shadow h-64 flex items-center justify-center text-gray-400">
+      일자별 사용량/비용 차트 (추후 연동)
+    </div>
+  </section>
+
+  <!-- 상세 테이블 -->
+  <section class="mt-8">
+    <div class="bg-white rounded-xl shadow">
+      <div class="flex items-center justify-between p-4 border-b">
+        <h2 class="font-semibold">상세 내역</h2>
+        <button type="button"
+                class="px-3 py-1.5 rounded-lg text-sm bg-indigo-600 text-white hover:bg-indigo-700">
+          CSV 내보내기
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-50 text-gray-600">
+            <tr>
+              <th class="text-left px-4 py-3">날짜</th>
+              <th class="text-left px-4 py-3">엔드포인트</th>
+              <th class="text-right px-4 py-3">호출수</th>
+              <th class="text-right px-4 py-3">토큰</th>
+              <th class="text-right px-4 py-3">비용(₩)</th>
+              <th class="text-right px-4 py-3">오류</th>
+            </tr>
+          </thead>
+          <!-- mock data -->
+          <tbody class="divide-y">
+            <tr>
+              <td class="px-4 py-2">2025-10-30</td>
+              <td class="px-4 py-2">/v1/generate</td>
+              <td class="px-4 py-2 text-right">2,340</td>
+              <td class="px-4 py-2 text-right">1,284,000</td>
+              <td class="px-4 py-2 text-right">28,600</td>
+              <td class="px-4 py-2 text-right">6</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2">2025-10-29</td>
+              <td class="px-4 py-2">/v1/vision</td>
+              <td class="px-4 py-2 text-right">1,120</td>
+              <td class="px-4 py-2 text-right">612,400</td>
+              <td class="px-4 py-2 text-right">9,700</td>
+              <td class="px-4 py-2 text-right">1</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2">2025-10-28</td>
+              <td class="px-4 py-2">/v1/edit</td>
+              <td class="px-4 py-2 text-right">740</td>
+              <td class="px-4 py-2 text-right">304,200</td>
+              <td class="px-4 py-2 text-right">6,300</td>
+              <td class="px-4 py-2 text-right">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="text-xs text-gray-400 p-4">※ 위 값은 더미 데이터입니다. 실제 연동 전 UI 확인용입니다.</p>
+    </div>
+  </section>
+{% endblock %}

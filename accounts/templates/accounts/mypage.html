@@ -1,0 +1,95 @@
+{% extends "accounts/base_user.html" %}  {# ← 관리자 base가 아니라 이걸 상속 #}
+{% block title %}마이페이지{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl font-bold mb-6">마이페이지</h1>
+
+  <!-- 상단 요약 -->
+  <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">이번 달 호출수</div>
+      <div class="text-2xl font-semibold mt-1">{{ usage.month_calls|default:0 }}</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">이번 달 토큰</div>
+      <div class="text-2xl font-semibold mt-1">{{ usage.month_tokens|default:0 }}</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">이번 달 예상 비용</div>
+      <div class="text-2xl font-semibold mt-1">₩ {{ usage.month_cost_won|default:0 }}</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="text-sm text-gray-500">평균 응답시간</div>
+      <div class="text-2xl font-semibold mt-1">{{ usage.avg_latency_ms|default:0 }} ms</div>
+    </div>
+  </section>
+
+  <!-- 일자별 -->
+  <section class="mt-8 bg-white rounded-xl shadow">
+    <div class="flex items-center justify-between p-4 border-b">
+      <h2 class="font-semibold">일자별 사용량 (최근 14일)</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-3">날짜</th>
+            <th class="text-right px-4 py-3">호출수</th>
+            <th class="text-right px-4 py-3">토큰</th>
+            <th class="text-right px-4 py-3">비용(₩)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          {% if daily_rows %}
+            {% for r in daily_rows %}
+              <tr>
+                <td class="px-4 py-2">{{ r.day }}</td>
+                <td class="px-4 py-2 text-right">{{ r.calls }}</td>
+                <td class="px-4 py-2 text-right">{{ r.tokens }}</td>
+                <td class="px-4 py-2 text-right">{{ r.cost_won }}</td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr><td colspan="4" class="px-4 py-6 text-center text-gray-400">표시할 데이터가 없습니다.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 생성 기록 -->
+  <section class="mt-8 bg-white rounded-xl shadow">
+    <div class="flex items-center justify-between p-4 border-b">
+      <h2 class="font-semibold">내 생성 기록 (최근 20건)</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-3">ID</th>
+            <th class="text-left px-4 py-3">종류</th>
+            <th class="text-left px-4 py-3">프롬프트</th>
+            <th class="text-left px-4 py-3">상태</th>
+            <th class="text-left px-4 py-3">생성일</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          {% if assets %}
+            {% for a in assets %}
+              <tr>
+                <td class="px-4 py-2">{{ a.id }}</td>
+                <td class="px-4 py-2">{{ a.kind|default:"-" }}</td>
+                <td class="px-4 py-2 truncate max-w-[400px]" title="{{ a.prompt }}">{{ a.prompt }}</td>
+                <td class="px-4 py-2">{{ a.status|default:"-" }}</td>
+                <td class="px-4 py-2">{{ a.created_at }}</td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr><td colspan="5" class="px-4 py-6 text-center text-gray-400">생성 기록이 없습니다.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-gray-400 p-4">※ 실제 모델 연결 전에는 빈 화면일 수 있습니다.</p>
+  </section>
+{% endblock %}

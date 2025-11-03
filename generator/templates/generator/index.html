@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI 이미지 & 영상 생성기</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .loader{border:8px solid #f3f3f3;border-top:8px solid #7c3aed;border-radius:50%;width:56px;height:56px;animation:spin 1.2s linear infinite}
+    @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+  </style>
+</head>
+<body class="bg-gray-100">
+
+<div class="container mx-auto p-6 max-w-7xl">
+
+  <!-- ✅ 추가: 상단 우측 로그아웃 버튼 -->
+  <div class="flex justify-end mb-2">
+    <a href="{% url 'accounts:logout' %}"
+       class="inline-flex items-center px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition">
+      로그아웃
+    </a>
+    <a href="{% url 'accounts:mypage' %}"
+   class="px-3 py-1.5 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm">
+  마이페이지
+</a>
+
+  </div>
+
+  <header class="text-center mb-8">
+    <h1 class="text-3xl font-bold">AI 이미지 & 영상 생성 프로젝트</h1>
+    <p class="text-gray-600 mt-2">이미지로 영상까지 만들고 저장하세요.</p>
+  </header>
+
+  <main class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- 좌측: 업로드 -->
+    <aside class="lg:col-span-3 bg-white p-6 rounded-2xl shadow">
+      <h2 class="text-xl font-semibold mb-3 border-b pb-2">1. 이미지 선택</h2>
+      <label for="image-upload-btn"
+             class="w-full cursor-pointer bg-indigo-600 text-white text-center font-semibold py-3 rounded-lg hover:bg-indigo-700 transition block">
+        이미지 업로드 (1~10장)
+      </label>
+      <input id="image-upload-btn" type="file" class="hidden" accept="image/*" multiple name="images">
+      <div id="image-preview-list" class="mt-4 grid grid-cols-2 gap-2">
+        <p id="upload-placeholder" class="text-gray-500 col-span-2">업로드한 이미지가 여기에 표시됩니다.</p>
+      </div>
+    </aside>
+
+    <!-- 중앙: 생성 -->
+    <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow flex flex-col gap-8">
+      <!-- 이미지 생성 -->
+      <section>
+        <h2 class="text-xl font-semibold mb-3 border-b pb-2">2. 이미지 생성</h2>
+        <form id="image-prompt-form" class="space-y-3">
+          <textarea id="image-prompt" rows="3" class="w-full p-3 border rounded-lg"
+                    placeholder="생성할 이미지 설명을 입력하세요..."></textarea>
+          <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700">
+            생성하기
+          </button>
+        </form>
+        <div id="image-display"
+             class="mt-4 w-full aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed">
+          <div id="image-loader" class="loader hidden"></div>
+          <img id="generated-image" src="" class="hidden w-full h-full object-contain rounded-lg" alt="생성된 이미지">
+          <p id="image-placeholder" class="text-gray-500">이곳에 생성 결과가 표시됩니다.</p>
+        </div>
+
+        <button id="save-image-btn"
+                class="mt-3 w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 hidden">
+          이미지 저장
+        </button>
+      </section>
+
+      <!-- 영상 생성 -->
+      <section id="video-generation-section">
+        <h2 class="text-xl font-semibold mb-3 border-b pb-2">4. 영상 생성</h2>
+        <form id="video-prompt-form" class="space-y-3">
+          <textarea id="video-prompt" rows="3" class="w-full p-3 border rounded-lg"
+                    placeholder="생성된 이미지 안에있는 두 캐릭터가 춤추면서 걷는영상 짧게 생성해줘"></textarea>
+          <button type="submit" class="w-full bg-purple-600 text-white font-bold py-3 rounded-lg hover:bg-purple-700">
+            영상 생성하기
+          </button>
+        </form>
+        <div id="video-display"
+             class="mt-4 w-full aspect-video bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed">
+          <div id="video-loader" class="loader hidden"></div>
+          <p id="video-placeholder" class="text-gray-500">이곳에 영상이 생성됩니다.</p>
+        </div>
+
+        <!-- ★ 새로 추가: 영상 저장 버튼 -->
+        <button id="save-video-btn"
+                class="mt-3 w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 hidden">
+          영상 저장
+        </button>
+      </section>
+    </div>
+
+    <!-- 우측: 저장 이미지/사용 -->
+    <aside class="lg:col-span-3 bg-white p-6 rounded-2xl shadow">
+      <h2 class="text-xl font-semibold mb-3 border-b pb-2">3. 저장된 이미지</h2>
+      <div id="saved-image-container" class="w-full aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+        <p class="text-gray-500 text-center">이미지를 저장하면 여기에 표시됩니다.</p>
+      </div>
+      <button id="use-image-btn"
+              class="mt-3 w-full bg-gray-700 text-white font-bold py-3 rounded-lg hover:bg-gray-800 hidden">
+        이 이미지로 영상 만들기
+      </button>
+    </aside>
+  </main>
+
+  <!-- 저장된 영상 영역 -->
+  <section class="mt-10 p-6 bg-white rounded-2xl shadow">
+    <h2 class="text-xl font-semibold mb-3 border-b pb-2">저장된 영상 목록</h2>
+    <div id="video-list-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <p id="no-videos-message" class="col-span-full text-gray-500 text-center">저장된 영상이 없습니다. 영상을 생성해보세요!</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ---------- DOM ----------
+  const imageUploadBtn = document.getElementById('image-upload-btn');
+  const imagePreviewList = document.getElementById('image-preview-list');
+  const uploadPlaceholder = document.getElementById('upload-placeholder');
+
+  const imagePromptForm = document.getElementById('image-prompt-form');
+  const imageLoader = document.getElementById('image-loader');
+  const generatedImage = document.getElementById('generated-image');
+  const imagePlaceholder = document.getElementById('image-placeholder');
+  const saveImageBtn = document.getElementById('save-image-btn');
+
+  const savedImageContainer = document.getElementById('saved-image-container');
+  const useImageBtn = document.getElementById('use-image-btn');
+
+  const videoPromptForm = document.getElementById('video-prompt-form');
+  const videoLoader = document.getElementById('video-loader');
+  const videoDisplay = document.getElementById('video-display');
+  const videoPlaceholder = document.getElementById('video-placeholder');
+  const saveVideoBtn = document.getElementById('save-video-btn');
+
+  const videoListContainer = document.getElementById('video-list-container');
+  const noVideosMessage = document.getElementById('no-videos-message');
+
+  // ---------- States ----------
+  let uploadedFilesList = [];
+  let generatedImageUrl = null;
+  let savedImageUrlForVideo = null;
+  let latestVideoUrl = null; // 방금 생성된 영상 URL(Replicate)
+
+  // ---------- Helpers ----------
+  function show(el) { el.classList.remove('hidden'); }
+  function hide(el) { el.classList.add('hidden'); }
+
+  async function fetchSavedVideos() {
+    try {
+      const res = await fetch('/list-videos/');
+      const data = await res.json();
+      renderVideoList(data.videos || []);
+    } catch (e) {
+      console.error('저장된 영상 목록 불러오기 실패:', e);
+    }
+  }
+
+  function renderVideoList(urls) {
+    if (!urls || urls.length === 0) {
+      noVideosMessage.classList.remove('hidden');
+      videoListContainer.innerHTML = '';
+      videoListContainer.appendChild(noVideosMessage);
+      return;
+    }
+    noVideosMessage.classList.add('hidden');
+    videoListContainer.innerHTML = '';
+
+    urls.forEach((url) => {
+      const card = document.createElement('div');
+      card.className = 'bg-gray-50 p-3 rounded-lg shadow';
+
+      card.innerHTML = `
+        <video src="${url}" controls class="w-full rounded-md aspect-video mb-2"></video>
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-600 truncate">${url.split('/').pop()}</span>
+          <a href="${url}" download class="text-indigo-600 hover:underline">다운로드</a>
+        </div>
+      `;
+      videoListContainer.appendChild(card);
+    });
+  }
+
+  // ---------- Image upload ----------
+  imageUploadBtn.addEventListener('change', (e) => {
+    const files = e.target.files || [];
+    if (!files.length) return;
+
+    uploadedFilesList = [];
+    imagePreviewList.innerHTML = '';
+    uploadPlaceholder && uploadPlaceholder.classList.add('hidden');
+
+    for (const file of files) {
+      uploadedFilesList.push(file);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        img.className = "w-full h-auto object-contain rounded-md p-1";
+        imagePreviewList.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // ---------- 이미지 생성 ----------
+  imagePromptForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('prompt', document.getElementById('image-prompt').value || '');
+
+    if (uploadedFilesList.length === 0) {
+      alert('이미지를 1장 이상 업로드해주세요.');
+      return;
+    }
+    for (const file of uploadedFilesList) formData.append('images', file);
+
+    hide(generatedImage);
+    hide(saveImageBtn);
+    hide(imagePlaceholder);
+    show(imageLoader);
+
+    const res = await fetch('/generate-image/', { method: 'POST', body: formData });
+    const data = await res.json();
+
+    hide(imageLoader);
+
+    if (data.image_url) {
+      generatedImageUrl = data.image_url;
+      generatedImage.src = generatedImageUrl;
+      show(generatedImage);
+      show(saveImageBtn);
+    } else {
+      imagePlaceholder.textContent = `오류: ${data.error || '알 수 없는 오류'}`;
+      show(imagePlaceholder);
+    }
+  });
+
+  // ---------- 이미지 저장 → 우측 패널/영상 생성으로 연결 ----------
+  saveImageBtn.addEventListener('click', () => {
+    savedImageUrlForVideo = generatedImageUrl;
+    savedImageContainer.innerHTML = `<img src="${savedImageUrlForVideo}" class="w-full h-full object-contain rounded-lg">`;
+    show(useImageBtn);
+  });
+
+  useImageBtn.addEventListener('click', () => {
+    document.getElementById('video-generation-section').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // ---------- 영상 생성 ----------
+  videoPromptForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!savedImageUrlForVideo) {
+      alert('먼저 이미지를 저장하고, "이 이미지로 영상 만들기"를 눌러주세요.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('prompt', document.getElementById('video-prompt').value || '');
+    formData.append('image_url', savedImageUrlForVideo);
+
+    hide(videoPlaceholder);
+    show(videoLoader);
+
+    // 기존 비디오 제거
+    const oldVideo = videoDisplay.querySelector('video');
+    if (oldVideo) oldVideo.remove();
+
+    const res = await fetch('/generate-video/', { method: 'POST', body: formData });
+    const data = await res.json();
+
+    hide(videoLoader);
+
+    if (data.video_url) {
+      latestVideoUrl = data.video_url;
+
+      const videoEl = document.createElement('video');
+      videoEl.src = latestVideoUrl;
+      videoEl.controls = true;
+      videoEl.className = 'w-full h-full object-contain rounded-lg';
+      videoDisplay.prepend(videoEl);
+
+      // 저장 버튼 노출
+      show(saveVideoBtn);
+    } else {
+      videoPlaceholder.textContent = `오류: ${data.error || '알 수 없는 오류'}`;
+      show(videoPlaceholder);
+      latestVideoUrl = null;
+      hide(saveVideoBtn);
+    }
+  });
+
+  // ---------- 영상 저장 ----------
+  saveVideoBtn.addEventListener('click', async () => {
+    if (!latestVideoUrl) {
+      alert('저장할 영상이 없습니다.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('video_url', latestVideoUrl);
+
+    saveVideoBtn.disabled = true;
+    saveVideoBtn.textContent = '저장 중...';
+
+    try {
+      const res = await fetch('/save-video/', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (data.saved_video_url) {
+        // 목록 새로고침
+        await fetchSavedVideos();
+        // 버튼 상태 되돌리기
+        saveVideoBtn.textContent = '영상 저장';
+        saveVideoBtn.disabled = false;
+        // 안내
+        alert('영상이 저장되었습니다.');
+      } else {
+        throw new Error(data.error || '저장 실패');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('영상 저장 중 오류가 발생했습니다.');
+      saveVideoBtn.textContent = '영상 저장';
+      saveVideoBtn.disabled = false;
+    }
+  });
+
+  // 초기: 저장된 영상 목록 로드
+  document.addEventListener('DOMContentLoaded', fetchSavedVideos);
+</script>
+</body>
+</html>
