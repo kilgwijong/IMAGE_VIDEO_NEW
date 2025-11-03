@@ -12,7 +12,7 @@
 | 이미지 생성 | 텍스트 프롬프트로 AI 이미지 생성 (Google Imagen) |
 | 비디오 생성 | 텍스트 프롬프트로 AI 비디오 생성 (Replicate API) |
 | 이번달 사용량 조회 | 월별 API 호출 수 / 토큰 사용량 / 예상 비용 제공 |
-| 일자별 사용 그래프 | API 호출량을 날짜 기준 시각화하여 제공 |
+| 일자별 사용량 그래프 | API 호출량을 날짜 기준 시각화하여 제공 |
 | 최근 생성 기록 | 사용자가 생성한 이미지 / 영상 기록 조회 가능 |
 | 파일 다운로드 | 생성된 이미지 / 영상 다운로드 가능 |
 
@@ -86,20 +86,3 @@ flowchart TD
     I --> I2[토큰 사용량]
     I --> I3[비용 계산]
     I --> I4[CSV Export]
-
-
----
-
-## 📄 시스템 아키텍쳐
-
-<img width="3336" height="1352" alt="Untitled diagram-2025-10-28-044621" src="https://github.com/user-attachments/assets/d6d9423e-ccfe-4bbc-8e87-abea93e1a94f" />
-
----
-
-## ⚙️ 설치 및 로컬 실행 방법
-
-### 1. 프로젝트 복제 (Clone)
-
-```bash
-git clone [내 깃허브 저장소 주소]
-cd [프로젝트 폴더명]
