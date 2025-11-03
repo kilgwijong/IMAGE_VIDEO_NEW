@@ -90,8 +90,6 @@ flowchart TD
 
 ---
 
----
-
 ## 📄 시스템 아키텍쳐
 
 <img width="3336" height="1352" alt="Untitled diagram-2025-10-28-044621" src="https://github.com/user-attachments/assets/d6d9423e-ccfe-4bbc-8e87-abea93e1a94f" />
